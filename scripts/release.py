@@ -67,11 +67,11 @@ FIREFOX_MANIFEST = FIREFOX_SOURCE_DIR / 'manifest.json'
 # 共用
 PACKAGE_JSON = CHROME_SOURCE_DIR / 'package.json'
 
-# 输出
-DOCS_DIR = ROOT / 'docs'
-RELEASES_DIR = DOCS_DIR / 'releases'
-CHROME_UPDATE_XML = DOCS_DIR / 'update.xml'
-FIREFOX_UPDATES_JSON = DOCS_DIR / 'updates.json'
+# 输出（根目录模式，适配 GitHub Pages / (root) 配置）
+DOCS_DIR = ROOT  # 直接用根目录
+RELEASES_DIR = ROOT / 'releases'
+CHROME_UPDATE_XML = ROOT / 'update.xml'
+FIREFOX_UPDATES_JSON = ROOT / 'updates.json'
 
 # 常量
 GITHUB_PAGES_BASE = 'https://shug666.github.io/JIRA_Efficiency_Assistant'
