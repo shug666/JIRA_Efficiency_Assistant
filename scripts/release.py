@@ -469,18 +469,6 @@ def sync_to_release_branch(new_version: str) -> None:
                 shutil.copy2(item, dest)
 
         # 提交
-        # 更新 HTML 中的版本号显示（install.html / install-firefox.html / index.html）
-        import glob as _glob
-        for _html_file in ['index.html', 'install.html', 'install-firefox.html']:
-            _hp = ROOT / _html_file
-            if _hp.exists():
-                _content = _hp.read_text(encoding='utf-8')
-                # 替换所有旧版本号引用（如 3.3.0 → 3.5.0）
-                import re as _re2
-                _content = _re2.sub(r'\d+\.\d+\.\d+', new_version, _content)
-                _content = _content.replace('vX.Y.Z', f'v{new_version}')
-                _hp.write_text(_content, encoding='utf-8')
-                log(f'✅ 更新版本号: {_html_file} → v{new_version}')
         subprocess.run(['git', 'add', '-A'], cwd=str(ROOT), check=True, capture_output=True)
         commit_result = subprocess.run(
             ['git', 'commit', '-m', f'release: v{new_version}'],
