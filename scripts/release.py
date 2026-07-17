@@ -439,7 +439,9 @@ def sync_to_release_branch(new_version: str) -> None:
     # 检查工作区是否干净（release-main 操作需要切换分支）
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=str(ROOT), capture_output=True, text=True).stdout.strip()
     # 只忽略 _dist_release 相关的变更
-    dirty = [l for l in status.split('\n') if l and '_dist_release' not in l and 'scripts/' not in l]
+    # 忽略无关文件的变更（这些不影响发版）
+    _ignore_patterns = ['_dist_release', 'scripts/', '.trae/', 'source.crx', '.amo-upload-uuid', '__pycache__']
+    dirty = [l for l in status.split('\n') if l and not any(p in l for p in _ignore_patterns)]
     if dirty:
         log('⚠️ 工作区有未提交的变更（非 _dist_release/scripts），建议先提交：')
         for l in dirty[:5]:
