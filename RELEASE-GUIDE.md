@@ -4,32 +4,34 @@
 
 ---
 
+## ⚡ 快速发版（TL;DR）
+
+```bash
+cd /home/ts/Cursor/0214test
+source .venv/bin/activate          # 激活虚拟环境（必须！）
+git checkout master                 # 确保在 master 分支
+python3 scripts/release.py 3.4.0 --chrome   # 发版（Chrome）
+```
+
+脚本自动完成：打包 → 推送到 release-main → 切回 master。推送后 1-2 分钟 GitHub Pages 生效。
+
+---
+
 ## 一、整体架构
 
 ```
-GitHub 仓库 (shug666/JIRA_Efficiency_Assistant)
+GitHub 仓库 (shug666/JIRA_Efficiency_Assistant) ← 公开分发仓库
 │
-├─ docs/                              ← GitHub Pages 源
-│  ├─ index.html                      ← 门户首页（Chrome/Firefox 双入口）
-│  ├─ install.html                    ← Chrome 图文安装指南
-│  ├─ install-firefox.html            ← Firefox 图文安装指南
-│  ├─ update.xml                      ← ⭐ Chrome 自动更新清单（每 5h 拉取）
-│  ├─ updates.json                    ← ⭐ Firefox 自动更新清单
-│  ├─ .nojekyll                       ← 禁用 Jekyll
-│  └─ releases/
-│     ├─ jira-helper-chrome-3.3.0.crx
-│     └─ jira-helper-firefox-3.3.0.xpi
-│
-├─ input/source/                      ← Chrome 源码
-│  ├─ manifest.json                   ← update_url 指向 GitHub Pages
-│  └─ ...
-├─ output/firefox/                    ← Firefox 源码
-│  ├─ manifest.json                   ← update_url 指向 GitHub Pages
-│  └─ ...
-├─ input/source.pem                   ← ⭐ Chrome 打包私钥（不入 git）
-└─ scripts/
-   ├─ release.py                      ← ⭐ 一键打包发版脚本（双端）
-   └─ compute_ext_id.py               ← Chrome 扩展 ID 计算工具
+├── index.html               ← 门户首页（Chrome/Firefox 双入口）
+├── install.html             ← Chrome 安装指南
+├── install-firefox.html     ← Firefox 安装指南
+├── update.xml               ← Chrome 自动更新清单（每 5h 拉取）
+├── updates.json             ← Firefox 自动更新清单
+├── .nojekyll                ← 禁用 Jekyll
+├── releases/
+│   ├── jira-helper-chrome-X.Y.Z.crx
+│   └── jira-helper-firefox-X.Y.Z.xpi
+└── scripts/release.py       ← 发版脚本（在 master 分支执行）
 ```
 
 ### 关键参数
@@ -37,192 +39,171 @@ GitHub 仓库 (shug666/JIRA_Efficiency_Assistant)
 | 参数 | Chrome | Firefox |
 |------|--------|---------|
 | 扩展 ID | `inmachhhbcehlpklfjgenplmgffbiiaf` | `jira-template-manager@shugan` |
-| 更新清单 | `update.xml` (XML 格式) | `updates.json` (JSON 格式) |
-| 更新清单 URL | `https://shug666.github.io/JIRA_Efficiency_Assistant/update.xml` | `https://shug666.github.io/JIRA_Efficiency_Assistant/updates.json` |
+| 更新清单 | `update.xml` (XML) | `updates.json` (JSON) |
 | 检查频率 | 每 5 小时 | 约每天 1 次 |
-| 签名要求 | 无（source.pem 自签） | **必须 AMO 签名** |
+| 签名要求 | source.pem 自签（Python crx3） | **必须 AMO 签名** |
 | 安装包格式 | `.crx` | `.xpi` |
 
----
-
-## 二、Chrome 自动更新（已就绪，无需签名）
-
-### 机制
+### Git 分支模型
 
 ```
-Chrome 扩展（拖拽 .crx 安装）
-    ↓ 每 5 小时
-GET update.xml
-    ↓ version > 本地
-下载 codebase 指向的 .crx → 静默安装
+master        ← 开发分支（有源码 input/source、output/firefox、source.pem）
+                 在此分支执行 scripts/release.py
+release-main  ← 分发分支（只有产物：crx/xpi/update.xml 等）
+                 脚本自动切到此处提交产物，推送到 GitHub
 ```
-
-Chrome 不需要任何签名，`source.pem` 自签的 crx 即可被认作合法扩展（前提是首次已拖拽安装）。
-
-### 关键文件
-
-- `input/source/manifest.json` 的 `update_url` → 指向 GitHub Pages 的 `update.xml`
-- `docs/update.xml` → `appid` + `codebase` + `version`
-- `docs/releases/jira-helper-chrome-X.Y.Z.crx` → 安装包
 
 ---
 
-## 三、Firefox 自动更新（需 AMO 签名）
+## 二、发版前置条件（一次性配置）
 
-### ⚠️ 核心约束：必须签名
+### 2.1 激活虚拟环境
 
+**每次发版前必须先激活虚拟环境**，否则 `cryptography` 库会找不到。
+
+```bash
+cd /home/ts/Cursor/0214test
+source .venv/bin/activate
+
+# 确认已激活（提示符显示 (.venv)，且 which python3 指向 .venv）
+which python3
+# → /home/ts/Cursor/0214test/.venv/bin/python3
+
+# 首次需安装 cryptography（仅一次）
+pip install cryptography -i https://mirrors.aliyun.com/pypi/simple/
 ```
-Firefox 安全策略：
-  所有扩展必须经过 AMO 签名才能永久安装 + 自动更新
 
-签名来源（二选一）：
-  ① AMO 公开上架（过审核，公开可见）
-  ② AMO 自托管签名 unlisted（过审核，但不公开列出）  ← 推荐
-
-未签名的 xpi：
-  只能用 about:debugging 临时加载（重启 Firefox 后失效，无自动更新）
+发版完成后退出虚拟环境：
+```bash
+deactivate
 ```
 
-### 签名流程（一次性配置）
+### 2.2 确认在 master 分支
 
-1. **注册 AMO 开发者账号**
-   - 访问 https://addons.mozilla.org/developers/
-   - 注册并登录
+```bash
+git checkout master
+# 发版脚本会在 master 打包，自动切到 release-main 推送，再切回 master
+```
 
-2. **获取 API 密钥**
-   - 访问 https://addons.mozilla.org/developers/addon/api/key/
-   - 记录 `JWT Issuer` 和 `JWT Secret`
+### 2.3（Firefox 签名才需要）配置 AMO 密钥
 
-3. **安装 web-ext 工具**
+Firefox 扩展必须签名才能永久安装和自动更新。如需发 Firefox 签名版：
+
+1. 注册 https://addons.mozilla.org/developers/
+2. 获取 API 密钥：https://addons.mozilla.org/developers/addon/api/key/
+3. 配置环境变量（写入 `~/.bashrc` 或 `~/.zshrc`）：
    ```bash
-   npm install -g web-ext
+   export AMO_JWT_ISSUER=user:12345678:123
+   export AMO_JWT_SECRET=你的secret
    ```
 
-4. **配置环境变量**
-   ```bash
-   export AMO_JWT_ISSUER=user:19753416:500
-   export AMO_JWT_SECRET=ae6b1e4ba8a6d0e80b47b209fb19922e4d02830eefbde088b6f8bf7142580ff7
-   ```
-   建议写入 `~/.bashrc` 或 `~/.zshrc` 持久化。
-
-### 首次签名发布
-
-```bash
-# 签名并打包（需 AMO 密钥）
-python3 scripts/release.py 3.3.0 --firefox --sign
-```
-
-或手动执行：
-```bash
-cd output/firefox
-web-ext sign \
-  --source-dir . \
-  --api-key $AMO_JWT_ISSUER \
-  --api-secret $AMO_JWT_SECRET \
-  --artifacts-dir ../../docs/releases
-```
-
-签名成功后，`docs/releases/` 下会生成签名过的 `.xpi`。
-
-### 自动更新机制
-
-```
-Firefox 扩展（已签名的 xpi 安装）
-    ↓ 约每天 1 次
-GET updates.json
-    ↓ version > 本地 + 签名有效
-下载 update_link 指向的 .xpi → 安装
-```
-
-`output/firefox/manifest.json` 的 `update_url` → 指向 GitHub Pages 的 `updates.json`。
-
 ---
 
-## 四、日常发版流程
+## 三、日常发版流程
 
-### 一键发版（两端同时）
+### 3.1 激活环境 + 发版
 
 ```bash
-# 前置：source.pem 在位，AMO 密钥已配置，两端都已 npm install
+# 1. 激活虚拟环境
+cd /home/ts/Cursor/0214test
+source .venv/bin/activate
+
+# 2. 确保在 master 分支
+git checkout master
+
+# 3. 执行发版（按需选一种）
+
+# 只发 Chrome（推荐，无需任何密钥）
+python3 scripts/release.py 3.4.0 --chrome
+
+# 发 Chrome + Firefox（Firefox 不签名，仅供临时调试）
+python3 scripts/release.py 3.4.0
+
+# 发 Chrome + Firefox 签名版（需先配 AMO 密钥）
 python3 scripts/release.py 3.4.0 --sign
 ```
 
-脚本自动完成：
-1. 改 Chrome + Firefox manifest + package.json 版本号
-2. 两端各自 `npm run build`
-3. Chrome: `source.pem` 打包 crx
-4. Firefox: `web-ext sign` 签名打包 xpi
-5. 更新 `docs/update.xml`（Chrome）
-6. 更新 `docs/updates.json`（Firefox，含 SHA256 校验）
-7. 打印 git 提交命令
+### 3.2 脚本自动完成的工作
 
-### 只发 Chrome
-
-```bash
-python3 scripts/release.py 3.4.0 --chrome
+```
+1. 改版本号（Chrome manifest + Firefox manifest + package.json）
+2. npm run build（Vue SPA，两端各自构建）
+3a. Chrome: 纯 Python crx3 打包（cryptography 库签名，不依赖 Chrome 可执行文件）
+3b. Firefox: web-ext 打包/签名 xpi
+4. 生成 update.xml / updates.json
+5. git stash → 切到 release-main → 复制产物 → 提交 → 推送 → 切回 master → git stash pop
 ```
 
-### 只发 Firefox
+推送后 1-2 分钟，GitHub Pages 生效，用户端浏览器自动更新。
 
-```bash
-python3 scripts/release.py 3.4.0 --firefox --sign
-```
+### 3.3 命令参数说明
 
-### 提交发布
-
-```bash
-git add docs/ input/source/manifest.json input/source/package.json output/firefox/manifest.json scripts/release.py
-git commit -m "release: v3.4.0"
-git push origin main
-```
+| 命令 | Chrome | Firefox | 需要密钥 |
+|------|--------|---------|---------|
+| `release.py 3.4.0` | ✅ 打包推送 | ✅ 打包（不签名） | ❌ |
+| `release.py 3.4.0 --chrome` | ✅ 打包推送 | ❌ 跳过 | ❌ |
+| `release.py 3.4.0 --firefox` | ❌ 跳过 | ✅ 打包（不签名） | ❌ |
+| `release.py 3.4.0 --firefox --sign` | ❌ 跳过 | ✅ 签名打包 | ✅ 需 AMO |
+| `release.py 3.4.0 --sign` | ✅ 打包推送 | ✅ 签名打包 | ✅ 需 AMO |
+| `release.py 3.4.0 --no-build` | 跳过构建 | 跳过构建 | — |
+| `release.py 3.4.0 --no-push` | 只打包不推送 | 只打包不推送 | — |
 
 ---
 
-## 五、首次部署 GitHub Pages
-
-1. 打开仓库 `Settings → Pages`
-2. `Source` 选 `Deploy from a branch`
-3. `Branch` 选 `main` / `(docs)`
-4. 保存，等 1-2 分钟
-5. 访问确认：
-   - `https://shug666.github.io/JIRA_Efficiency_Assistant/` → 门户首页
-   - `https://shug666.github.io/JIRA_Efficiency_Assistant/update.xml` → Chrome 清单
-   - `https://shug666.github.io/JIRA_Efficiency_Assistant/updates.json` → Firefox 清单
-
----
-
-## 六、验证自动更新
+## 四、验证自动更新
 
 ### Chrome
 
-1. 拖拽安装当前版本 crx
-2. 发新版 + push
+1. 从 https://shug666.github.io/JIRA_Efficiency_Assistant/ 下载安装 crx
+2. 发新版
 3. `chrome://extensions/` → 点「更新」
 4. 观察版本号变化
 
 ### Firefox
 
 1. 安装签名过的 xpi
-2. 发新版 + push
+2. 发新版
 3. `about:addons` → 齿轮 → 「检查更新」
 4. 观察版本号变化
 
 ---
 
-## 七、常见排查
+## 五、常见问题
 
-| 现象 | 原因 | 解决 |
-|------|------|------|
-| Chrome 更新后版本没变 | update.xml 缓存 | 强刷 update.xml 或等 Pages 生效 |
-| Chrome 扩展 ID 不一致 | 用了不同的 pem | 必须用 `input/source.pem` |
-| Firefox "无法安装，未验证" | xpi 未签名 | 用 `--sign` 参数 + AMO 密钥 |
-| Firefox 更新不生效 | update_url 未配或未签名 | 确认 manifest.update_url + xpi 已签名 |
-| codebase/update_link 404 | 文件名不匹配 | 检查 `docs/releases/` 文件名与清单一致 |
-| GitHub Pages 返回 404 | 未开 Pages 或分支错 | Settings → Pages 确认 `main/docs` |
+### `ModuleNotFoundError: No module named 'cryptography'`
+
+**原因**：没有激活虚拟环境，或虚拟环境里没装 cryptography。
+
+**解决**：
+```bash
+source .venv/bin/activate
+pip install cryptography -i https://mirrors.aliyun.com/pypi/simple/
+```
+
+### `Firefox 签名需要环境变量 AMO_JWT_ISSUER 和 AMO_JWT_SECRET`
+
+**原因**：`--sign` 需要 AMO 密钥但未配置。
+
+**解决**：要么用 `--chrome` 只发 Chrome（不需要密钥），要么按 2.3 节配置 AMO 密钥。
+
+### Chrome crx 打包失败
+
+**原因**：新版 Chrome headless 模式不再支持 `--pack-extension`。
+
+**现状**：脚本已改用纯 Python crx3 打包（cryptography 库），不依赖 Chrome 可执行文件。确保虚拟环境有 cryptography 即可。
+
+### 推送失败 / 超时
+
+crx 文件较大（3-4MB），推送可能需要 30 秒以上。脚本设置了 120 秒超时。如仍失败：
+```bash
+git checkout release-main
+git push release release-main:main
+git checkout master
+```
 
 ---
 
-## 八、安全注意事项
+## 六、安全注意事项
 
 ### source.pem（Chrome 私钥）
 
@@ -235,15 +216,9 @@ git push origin main
 - 不要硬编码到脚本，用环境变量
 - 可在 AMO 后台随时重新生成
 
-### ⚠️ 历史泄露处理
-
-`input/source.pem` 曾被 git 跟踪过（现已移除）。如仓库为公开，需：
-1. 用 `git filter-repo` 清除历史中的 pem
-2. 或轮换密钥（生成新 pem → Chrome ID 变化 → 用户重装）
-
 ---
 
-## 九、Chrome vs Firefox 更新机制对比
+## 七、Chrome vs Firefox 更新机制对比
 
 ```
                 Chrome                      Firefox
@@ -255,8 +230,9 @@ git push origin main
 自动更新      ✅ 原生支持                ✅ 需签名 xpi
 未签名后果    不适用（Chrome 不签名）    只能临时加载，无自动更新
 扩展 ID       pem 指纹（32位）           gecko.id（自定义字符串）
+打包方式      Python crx3（cryptography） web-ext（npm 工具）
 ```
 
 ---
 
-*本指南由 scripts/release.py 和 docs/ 目录共同维护。*
+*本指南由 scripts/release.py 维护。*

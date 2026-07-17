@@ -16,19 +16,18 @@
 
 ---
 
-## 仓库结构
+## 仓库结构（根目录模式，GitHub Pages = /(root)）
 
 ```
-docs/                        ← GitHub Pages 源（Settings → Pages → main/docs）
-├── index.html               ← 门户首页（Chrome/Firefox 双入口）
-├── install.html             ← Chrome 安装指南
-├── install-firefox.html     ← Firefox 安装指南
-├── update.xml               ← Chrome 自动更新清单
-├── updates.json             ← Firefox 自动更新清单
-├── .nojekyll                ← 禁用 Jekyll
-└── releases/
-    ├── jira-helper-chrome-X.Y.Z.crx
-    └── jira-helper-firefox-X.Y.Z.xpi
+index.html               ← 门户首页（Chrome/Firefox 双入口）
+install.html             ← Chrome 安装指南
+install-firefox.html     ← Firefox 安装指南
+update.xml               ← Chrome 自动更新清单（每 5h 拉取）
+updates.json             ← Firefox 自动更新清单
+.nojekyll                ← 禁用 Jekyll
+releases/
+├── jira-helper-chrome-X.Y.Z.crx
+└── jira-helper-firefox-X.Y.Z.xpi
 ```
 
 ## 自动更新原理
@@ -44,11 +43,45 @@ docs/                        ← GitHub Pages 源（Settings → Pages → main/
 
 ## 维护者发版
 
-见 [RELEASE-GUIDE.md](https://shug666.github.io/JIRA_Efficiency_Assistant/RELEASE-GUIDE.md)
+详细说明见 **[RELEASE-GUIDE.md](https://shug666.github.io/JIRA_Efficiency_Assistant/RELEASE-GUIDE.md)**
+
+### 前置：切换到虚拟环境（每次发版前必须执行）
 
 ```bash
-# 一键发版（双端）
-python3 scripts/release.py 3.4.0 --sign
+# 进入项目根目录
+cd /home/ts/Cursor/0214test
 
-# 提交推送
-git add docs/ && git commit -m "release: v3.4.0" && git push
+# 激活虚拟环境（必须！否则 cryptography 库找不到）
+source .venv/bin/activate
+
+# 确认虚拟环境已激活（提示符应显示 (.venv)）
+which python3
+# 应输出: /home/ts/Cursor/0214test/.venv/bin/python3
+
+# 如果 cryptography 未安装（首次发版需执行一次）
+pip install cryptography -i https://mirrors.aliyun.com/pypi/simple/
+```
+
+### 发版命令
+
+```bash
+# ⚠️ 必须在 master 分支执行（不是 release-main）
+git checkout master
+
+# 只发 Chrome（推荐先跑通这个，无需任何密钥）
+python3 scripts/release.py 3.4.0 --chrome
+
+# 发 Chrome + Firefox（Firefox 不签名，仅供临时调试）
+python3 scripts/release.py 3.4.0
+
+# 发 Chrome + Firefox 签名版（需 AMO 密钥，见 RELEASE-GUIDE.md）
+python3 scripts/release.py 3.4.0 --sign
+```
+
+脚本会自动完成：打包 → 切到 release-main → 提交 → 推送 → 切回 master。
+推送后 GitHub Pages 1-2 分钟生效，用户端浏览器自动更新。
+
+### 退出虚拟环境
+
+```bash
+deactivate
