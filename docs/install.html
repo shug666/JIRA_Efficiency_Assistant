@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JIRA 效率助手 — 安装指南</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #333;
+      line-height: 1.7;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      margin-bottom: 24px;
+    }
+    .header { text-align: center; margin-bottom: 32px; }
+    .header h1 {
+      font-size: 32px;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header .version {
+      display: inline-block;
+      background: #eef;
+      color: #667eea;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .header .subtitle { color: #666; font-size: 15px; }
+    .alert {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    .alert strong { color: #856404; }
+    .alert-blue {
+      background: #e7f5ff;
+      border-left-color: #3b82f6;
+    }
+    .alert-blue strong { color: #1e40af; }
+    .step {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #eee;
+    }
+    .step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .step-num {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .step-content { flex: 1; }
+    .step-content h3 { font-size: 18px; color: #1a1a2e; margin-bottom: 8px; }
+    .step-content p { color: #555; margin-bottom: 12px; }
+    .step-content ol, .step-content ul { padding-left: 20px; margin-bottom: 12px; color: #555; }
+    .step-content li { margin-bottom: 6px; }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.2s;
+      margin-right: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(102,126,234,0.4); }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-secondary:hover { background: #e0e0e0; }
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 13px;
+      margin: 12px 0;
+      overflow-x: auto;
+      word-break: break-all;
+    }
+    .faq { margin-top: 32px; }
+    .faq h2 { font-size: 22px; margin-bottom: 16px; color: #1a1a2e; }
+    .faq-item {
+      background: #f9f9f9;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .faq-item h4 { color: #667eea; margin-bottom: 6px; font-size: 15px; }
+    .faq-item p { color: #555; font-size: 14px; }
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      margin-top: 24px;
+    }
+    kbd {
+      background: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .badge {
+      display: inline-block;
+      background: #10b981;
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="browser-switch" style="text-align:center;margin-bottom:24px;">
+      <a href="install.html" style="display:inline-block;padding:8px 20px;margin:0 6px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">Chrome 安装</a>
+      <a href="install-firefox.html" style="display:inline-block;padding:8px 20px;margin:0 6px;border-radius:20px;text-decoration:none;font-size:14px;font-weight:600;background:#fff;color:#666;border:1px solid #ddd;">Firefox 安装</a>
+    </div>
+    <div class="card">
+      <div class="header">
+        <span class="version">v3.3.0 · Chrome</span>
+        <h1>JIRA 效率助手</h1>
+        <p class="subtitle">飞书认证 · 模板管理 · 问题单合规审计 · 定时提醒 · 飞书通知</p>
+      </div>
+
+      <div class="alert alert-blue">
+        <strong>📌 安装后即可享受自动更新</strong>：本插件通过 GitHub 分发，首次按下方三步安装后，后续 Chrome 会<strong>每 5 小时自动检查更新</strong>，无需再手动操作。
+      </div>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>下载安装包</h3>
+          <p>点击下方按钮下载最新版 <code>.crx</code> 安装文件（约 17MB）：</p>
+          <a class="btn btn-primary" href="https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-chrome-3.3.0.crx" download>
+            ⬇ 下载 JIRA效率助手 v3.3.0 (.crx)
+          </a>
+          <p style="font-size:13px;color:#999;margin-top:8px;">
+            提示：若点击后浏览器直接拦截，请改用「右键 → 链接另存为」下载到本地。
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>打开 Chrome 扩展程序页并开启开发者模式</h3>
+          <p>点击按钮直接打开扩展管理页（或手动在地址栏输入 <code>chrome://extensions/</code>）：</p>
+          <button class="btn btn-primary" onclick="openExtensions()">
+            🔧 一键打开扩展程序页
+          </button>
+          <p style="font-size:13px;color:#999;margin-top:8px;">
+            打开后，请确认<strong>右上角的「开发者模式」开关已打开</strong>（绿色为开启）。
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>拖拽安装</h3>
+          <p>把第一步下载的 <code>.crx</code> 文件，<strong>直接拖到</strong> Chrome 扩展程序页面中央：</p>
+          <ol>
+            <li>打开文件管理器，找到下载的 <code>jira-helper-chrome-3.3.0.crx</code></li>
+            <li>用鼠标按住文件，拖到 Chrome 扩展程序页面的空白区域</li>
+            <li>松开后会弹出「添加扩展程序」确认框，点击「<strong>添加扩展程序</strong>」</li>
+          </ol>
+          <div class="alert">
+            <strong>⚠️ 如果拖拽后被拦截</strong>（提示"无法添加"），请改用以下方式：<br>
+            ① 将 <code>.crx</code> 改名为 <code>.zip</code> 后解压到一个文件夹<br>
+            ② 在扩展程序页点「<strong>加载已解压的扩展程序</strong>」<br>
+            ③ 选择解压出的文件夹即可（注意：此方式不具备自动更新，仅作兜底）
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-blue" style="margin-top:24px;">
+        <strong>✅ 安装成功标志</strong>：浏览器右上角工具栏出现 JIRA 效率助手图标。
+        点击它可打开模板管理页。后续 Chrome 会自动在后台更新到最新版，无需任何操作。
+      </div>
+    </div>
+
+    <div class="card faq">
+      <h2>常见问题</h2>
+
+      <div class="faq-item">
+        <h4>Q：为什么下载 .crx 时 Chrome 直接拦截了？</h4>
+        <p>A：Chrome 75+ 默认禁止从非商店安装 .crx。请改用「右键 → 链接另存为」下载到本地，再按第 3 步拖拽安装。</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Q：拖拽 .crx 后提示"无法添加该扩展程序，程序包无效"怎么办？</h4>
+        <p>A：这是因为某些企业版 Chrome 严格限制非商店扩展。请用上方"拖拽被拦截"的兜底方案：改 .zip 解压后「加载已解压的扩展程序」。注意该兜底方式无自动更新。</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Q：安装后如何更新到新版本？</h4>
+        <p>A：<strong>完全自动</strong>。Chrome 每 5 小时检查一次，发现新版会后台下载安装。也可在 <code>chrome://extensions/</code> 点「更新」按钮立即检查。</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Q：如何确认当前版本？</h4>
+        <p>A：打开 <code>chrome://extensions/</code>，找到"JIRA效率助手"，卡片上会显示版本号（如 3.3.0）。</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Q：更新后需要重新登录飞书吗？</h4>
+        <p>A：不需要。扩展数据存储在 <code>chrome.storage.local</code>，更新不会清除。飞书登录态会保留。</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Q：支持 Edge 浏览器吗？</h4>
+        <p>A：支持。Edge 基于 Chromium，同样打开 <code>edge://extensions/</code>，开开发者模式后拖拽 .crx 即可。</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      JIRA 效率助手 · 由 GitHub Pages 分发 · 自动更新由 Chrome 原生支持
+    </div>
+  </div>
+
+  <script>
+    function openExtensions() {
+      // Chrome / Edge / Brave 等 Chromium 系浏览器
+      window.open('chrome://extensions/', '_blank');
+      // 兜底提示
+      setTimeout(function() {
+        alert('如未自动打开，请手动在地址栏输入：chrome://extensions/ （Edge 浏览器为 edge://extensions/）');
+      }, 500);
+    }
+  </script>
+</body>
+</html>

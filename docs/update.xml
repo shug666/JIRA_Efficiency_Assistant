@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Chrome 扩展自动更新清单
+  =======================
+  Chrome 每 5 小时会拉取本文件，对比 version 决定是否下载 codebase 指向的 crx。
+
+  发版时只需更新下面两处：
+    1. <updatecheck> 的 version    → 新版本号
+    2. <updatecheck> 的 codebase   → 新 crx 的 URL
+
+  也可直接运行 `python3 scripts/release.py <新版本号>` 自动生成。
+-->
+<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
+  <app appid='inmachhhbcehlpklfjgenplmgffbiiaf'>
+    <updatecheck codebase='https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-chrome-3.3.0.crx' version='3.3.0' />
+  </app>
+</gupdate>

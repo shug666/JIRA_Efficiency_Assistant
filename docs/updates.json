@@ -1,0 +1,18 @@
+{
+  "addons": {
+    "jira-template-manager@shugan": {
+      "updates": [
+        {
+          "version": "3.3.0",
+          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.3.0.xpi",
+          "update_hash": "",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "128.0"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
