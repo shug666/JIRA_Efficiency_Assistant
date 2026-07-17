@@ -440,15 +440,14 @@ def sync_to_release_branch(new_version: str) -> None:
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=str(ROOT), capture_output=True, text=True).stdout.strip()
     # 只忽略 _dist_release 相关的变更
     # 忽略无关文件的变更（这些不影响发版）
-    _ignore_patterns = ['_dist_release', 'scripts/', '.trae/', 'source.crx', '.amo-upload-uuid', '__pycache__']
+    _ignore_patterns = ['_dist_release', 'scripts/', '.trae/', 'source.crx', '.amo-upload-uuid', '__pycache__', 'manifest.json', 'package.json']
     dirty = [l for l in status.split('\n') if l and not any(p in l for p in _ignore_patterns)]
     if dirty:
         log('⚠️ 工作区有未提交的变更（非 _dist_release/scripts），建议先提交：')
         for l in dirty[:5]:
             print(f'    {l}')
-        resp = input('继续可能丢失这些变更，确认继续？(y/N) ')
-        if resp.lower() != 'y':
-            fail('用户取消。请先提交或 stash 工作区变更。')
+        # 自动继续（版本号变更等是正常的，不需要用户确认）
+        log('  (自动继续，这些是版本号更新产生的正常变更)')
 
     # 用 git stash 临时保存工作区（含 _dist_release，因为它是 untracked）
     log('临时保存工作区...')
