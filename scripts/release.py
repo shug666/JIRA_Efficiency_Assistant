@@ -469,7 +469,9 @@ def sync_to_release_branch(new_version: str) -> None:
                 shutil.copy2(item, dest)
 
         # 提交
-        subprocess.run(['git', 'add', '-A'], cwd=str(ROOT), check=True, capture_output=True)
+        # 只添加分发产物（不 add -A，避免提交源码等无关文件）
+        _release_files = ['update.xml', 'updates.json', '.nojekyll', 'releases/', 'scripts/']
+        subprocess.run(['git', 'add'] + _release_files, cwd=str(ROOT), check=True, capture_output=True)
         commit_result = subprocess.run(
             ['git', 'commit', '-m', f'release: v{new_version}'],
             cwd=str(ROOT), capture_output=True, text=True
