@@ -3,6 +3,16 @@
     "jira-template-manager@shugan": {
       "updates": [
         {
+          "version": "3.4.2",
+          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.4.2.xpi",
+          "update_hash": "sha256:dD9niochlTSuSKlU2w9j41WZeFH3R0OfW2A33itdHME=",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "128.0"
+            }
+          }
+        },
+        {
           "version": "3.4.1",
           "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.4.1.xpi",
           "update_hash": "sha256:cKcuprgb5pfPw1Y0oJnk+F4F7SbOUv/s1I+dR7jiVWA=",
@@ -65,5 +75,5 @@
       ]
     }
   },
-  "_cache_bust": "1784470291"
+  "_cache_bust": "1784470744"
 }
