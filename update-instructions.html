@@ -5,17 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JIRA效率助手 3.4.4 更新说明</title>
 <style>
-  body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; color: #333; line-height: 1.7; }
+  body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; max-width: 1100px; margin: 40px auto; padding: 0 24px; color: #333; line-height: 1.7; }
   h1 { color: #2c3e50; border-bottom: 2px solid #42b983; padding-bottom: 10px; }
-  h2 { margin-top: 32px; }
+  h2 { margin-top: 0; }
   .version-badge { display: inline-block; background: #42b983; color: #fff; padding: 4px 12px; border-radius: 12px; font-size: 14px; margin-left: 8px; }
-  .download-btn { display: inline-block; background: #42b983; color: #fff; padding: 14px 32px; font-size: 16px; border-radius: 6px; text-decoration: none; margin: 24px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  .columns { display: flex; gap: 32px; margin-top: 24px; }
+  .column { flex: 1; padding: 24px; border-radius: 10px; background: #fff; border: 1px solid #eee; }
+  .column.chrome { border-top: 4px solid #42b983; }
+  .column.firefox { border-top: 4px solid #ff7139; }
+  .download-btn { display: inline-block; background: #42b983; color: #fff; padding: 14px 32px; font-size: 16px; border-radius: 6px; text-decoration: none; margin: 16px 0 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
   .download-btn:hover { background: #3aa876; }
-  .steps { background: #f8f9fa; padding: 20px 24px; border-radius: 8px; border-left: 4px solid #42b983; margin: 20px 0; }
+  .download-btn.ff { background: #ff7139; }
+  .download-btn.ff:hover { background: #e65f2e; }
+  .steps { background: #f8f9fa; padding: 20px 24px; border-radius: 8px; border-left: 4px solid #42b983; margin: 16px 0; }
+  .steps.ff { border-left-color: #ff7139; }
   .steps ol { padding-left: 24px; }
   .steps li { margin: 10px 0; }
-  .note { background: #fff8e1; padding: 12px 16px; border-radius: 6px; border-left: 4px solid #ffa000; margin: 16px 0; font-size: 14px; }
   code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "SFMono-Regular", Consolas, monospace; }
+  @media (max-width: 768px) { .columns { flex-direction: column; } }
 </style>
 </head>
 <body>
@@ -23,50 +30,47 @@
 
   <p>检测到新版本 <strong>v3.4.4</strong> 可用。请按以下步骤手动更新：</p>
 
-  <h2 style="color: #42b983;">Chrome 更新</h2>
+  <div class="columns">
+  <div class="column chrome">
+    <h2 style="color: #42b983;">Chrome 更新</h2>
+    <p>Chrome 用户请按以下步骤更新：</p>
 
-  <div class="download-btn">
-    <a href="http://10.24.137.80/jsa-dist/releases/jira-helper-chrome-3.4.4.zip" class="download-btn" download>下载 Chrome 扩展包 (.zip)</a>
+    <div class="download-btn">
+      <a href="http://10.24.137.80/jsa-dist/releases/jira-helper-chrome-3.4.4.zip" class="download-btn" download>下载 Chrome 扩展包 (.zip)</a>
+    </div>
+
+    <div class="steps">
+      <strong>安装步骤：</strong>
+      <ol>
+        <li>点击上方按钮下载 <code>jira-helper-chrome-3.4.4.zip</code> 文件</li>
+        <li>把 <code>.zip</code> 文件解压到一个目录(例如 <code>D:\jira-helper</code> 或 <code>~/jira-helper</code>),路径建议全英文无空格</li>
+        <li>打开新标签页，地址栏输入 <code>chrome://extensions</code> 回车</li>
+        <li>打开页面右上角的<strong>开发者模式</strong>开关</li>
+        <li>点击页面左上角的<strong>"加载已解压的扩展程序"</strong>按钮</li>
+        <li>选择刚才解压出来的整个文件夹,完成更新</li>
+      </ol>
+    </div>
   </div>
 
-  <div class="steps">
-    <strong>安装步骤：</strong>
-    <ol>
-      <li>点击上方按钮下载 <code>jira-helper-chrome-3.4.4.zip</code> 文件</li>
-      <li>把 <code>.zip</code> 文件解压到一个目录(例如 <code>D:\jira-helper</code> 或 <code>~/jira-helper</code>),路径建议全英文无空格</li>
-      <li>打开新标签页，地址栏输入 <code>chrome://extensions</code> 回车</li>
-      <li>打开页面右上角的<strong>开发者模式</strong>开关</li>
-      <li>点击页面左上角的<strong>"加载已解压的扩展程序"</strong>按钮</li>
-      <li>选择刚才解压出来的整个文件夹,完成更新</li>
-    </ol>
+  <div class="column firefox">
+    <h2 style="color: #ff7139;">Firefox 更新</h2>
+    <p>Firefox 用户请按以下步骤更新：</p>
+
+    <div class="download-btn">
+      <a href="http://10.24.137.80/jsa-dist/releases/jira-helper-firefox-3.4.4.xpi" class="download-btn ff" download>下载 Firefox 安装包 (.xpi)</a>
+    </div>
+
+    <div class="steps ff">
+      <strong>安装步骤：</strong>
+      <ol>
+        <li>点击上方按钮下载 <code>jira-helper-firefox-3.4.4.xpi</code> 文件</li>
+        <li>打开新标签页，地址栏输入 <code>about:addons</code> 回车</li>
+        <li>点击页面上方的齿轮图标 ⚙️，选择"从文件安装附加组件"</li>
+        <li>选择刚下载的 <code>.xpi</code> 文件，确认安装</li>
+        <li>安装完成后重启浏览器即可使用新版本</li>
+      </ol>
+    </div>
   </div>
-
-  <div class="note">
-    <strong>说明：</strong>Chrome 130+ 不再允许直接拖拽 .crx 安装非 Web Store 扩展,因此改为下载 zip 解压后"加载已解压的扩展程序"。后续版本会通过扩展内通知提醒您更新。
-  </div>
-
-  <hr style="margin: 32px 0; border: none; border-top: 1px solid #eee;">
-
-  <h2 style="color: #ff7139;">Firefox 更新</h2>
-  <p>Firefox 用户请按以下步骤更新：</p>
-
-  <div class="download-btn">
-    <a href="http://10.24.137.80/jsa-dist/releases/jira-helper-firefox-3.4.4.xpi" class="download-btn" download style="background: #ff7139;">下载 Firefox 安装包 (.xpi)</a>
-  </div>
-
-  <div class="steps" style="border-left-color: #ff7139;">
-    <strong>安装步骤：</strong>
-    <ol>
-      <li>点击上方按钮下载 <code>jira-helper-firefox-3.4.4.xpi</code> 文件</li>
-      <li>打开新标签页，地址栏输入 <code>about:addons</code> 回车</li>
-      <li>点击页面上方的齿轮图标 ⚙️，选择"从文件安装附加组件"</li>
-      <li>选择刚下载的 <code>.xpi</code> 文件，确认安装</li>
-      <li>安装完成后重启浏览器即可使用新版本</li>
-    </ol>
-  </div>
-
-  <div class="note">
-    <strong>注意：</strong>下载的 xpi 已由 AMO 签名，可直接安装。如果之前通过自定义 update_url 自动更新失败，手动安装一次新版本后即可恢复正常。
   </div>
 
   <p style="margin-top: 32px; color: #999; font-size: 12px;">JIRA效率助手 · 自动生成于发版流程</p>
