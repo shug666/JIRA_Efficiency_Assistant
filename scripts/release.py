@@ -19,8 +19,8 @@
   python3 scripts/release.py 3.5.0 --chrome             # 只 Chrome（无需任何密钥）
   python3 scripts/release.py 3.5.0 --firefox --sign     # 只 Firefox 签名版（需 AMO 密钥）
   python3 scripts/release.py 3.5.0 --sign               # Chrome + Firefox 签名版
-  python3 scripts/release.py 3.5.0 --build-only         # 只更新版本号 + npm build（不打包不推送）
-  python3 scripts/release.py 3.5.0 --release-only       # 只更新版本号 + 生成清单 + 推送（跳过编译和打包）
+  python3 scripts/release.py 3.4.4 --build-only         # 只更新版本号 + npm build（不打包不推送）
+  python3 scripts/release.py 3.4.4 --release-only       # 只更新版本号 + 生成清单 + 推送（跳过编译和打包）
   python3 scripts/release.py 3.5.0 --no-build           # 跳过 npm run build
   python3 scripts/release.py 3.5.0 --no-pack            # 跳过打包（手动签名后用已有 crx/xpi）
   python3 scripts/release.py 3.5.0 --no-push            # 只打包不推送（检查产物）
@@ -439,15 +439,14 @@ def sync_to_release_branch(new_version: str) -> None:
     # 检查工作区是否干净（release-main 操作需要切换分支）
     status = subprocess.run(['git', 'status', '--porcelain'], cwd=str(ROOT), capture_output=True, text=True).stdout.strip()
     # 只忽略 _dist_release 相关的变更
-    # 忽略无关文件的变更（这些不影响发版）
-    _ignore_patterns = ['_dist_release', 'scripts/', '.trae/', 'source.crx', '.amo-upload-uuid', '__pycache__', 'manifest.json', 'package.json']
-    dirty = [l for l in status.split('\n') if l and not any(p in l for p in _ignore_patterns)]
+    dirty = [l for l in status.split('\n') if l and '_dist_release' not in l and 'scripts/' not in l]
     if dirty:
         log('⚠️ 工作区有未提交的变更（非 _dist_release/scripts），建议先提交：')
         for l in dirty[:5]:
             print(f'    {l}')
-        # 自动继续（版本号变更等是正常的，不需要用户确认）
-        log('  (自动继续，这些是版本号更新产生的正常变更)')
+        resp = input('继续可能丢失这些变更，确认继续？(y/N) ')
+        if resp.lower() != 'y':
+            fail('用户取消。请先提交或 stash 工作区变更。')
 
     # 用 git stash 临时保存工作区（含 _dist_release，因为它是 untracked）
     log('临时保存工作区...')
@@ -468,9 +467,19 @@ def sync_to_release_branch(new_version: str) -> None:
                 shutil.copy2(item, dest)
 
         # 提交
-        # 只添加分发产物（不 add -A，避免提交源码等无关文件）
-        _release_files = ['update.xml', 'updates.json', '.nojekyll', 'releases/', 'scripts/']
-        subprocess.run(['git', 'add'] + _release_files, cwd=str(ROOT), check=True, capture_output=True)
+        # 更新 HTML 中的版本号显示（install.html / install-firefox.html / index.html）
+        import glob as _glob
+        for _html_file in ['index.html', 'install.html', 'install-firefox.html']:
+            _hp = ROOT / _html_file
+            if _hp.exists():
+                _content = _hp.read_text(encoding='utf-8')
+                # 替换所有旧版本号引用（如 3.3.0 → 3.5.0）
+                import re as _re2
+                _content = _re2.sub(r'\d+\.\d+\.\d+', new_version, _content)
+                _content = _content.replace('vX.Y.Z', f'v{new_version}')
+                _hp.write_text(_content, encoding='utf-8')
+                log(f'✅ 更新版本号: {_html_file} → v{new_version}')
+        subprocess.run(['git', 'add', '-A'], cwd=str(ROOT), check=True, capture_output=True)
         commit_result = subprocess.run(
             ['git', 'commit', '-m', f'release: v{new_version}'],
             cwd=str(ROOT), capture_output=True, text=True
@@ -565,9 +574,6 @@ def main() -> None:
             else:
                 crx_path = RELEASES_DIR / f'{EXT_NAME}-chrome-{new_version}.crx'
                 if not crx_path.exists():
-                    log(f'⚠️ 未找到 Chrome crx: {crx_path}')
-                    log(f'   请手动打包后放到: _dist_release/releases/jira-helper-chrome-{new_version}.crx')
-                    log(f'   打包方式: chrome://extensions → 打包扩展程序 → 选 input/source + input/source.pem')
                     raise FileNotFoundError(f'未找到 crx: {crx_path}')
             update_chrome_xml(new_version, crx_path.name)
             chrome_ok = True
@@ -581,13 +587,11 @@ def main() -> None:
             else:
                 xpi_path = RELEASES_DIR / f'{EXT_NAME}-firefox-{new_version}.xpi'
                 if not xpi_path.exists():
-                    log(f'⚠️ 未找到 Firefox xpi: {xpi_path}')
-                    log(f'   请手动签名后放到: _dist_release/releases/jira-helper-firefox-{new_version}.xpi')
-                    log(f'   签名方式: AMO 后台上传 → 审核通过后下载签名 xpi')
                     raise FileNotFoundError(f'未找到 xpi: {xpi_path}')
             update_firefox_json(new_version, xpi_path.name, xpi_path)
             firefox_ok = True
         except (Exception, SystemExit) as e:
+            # fail() 抛 SystemExit，也 catch 住（Firefox 签名缺密钥不阻塞 Chrome）
             msg = str(e) if not isinstance(e, SystemExit) else 'Firefox 签名/打包失败'
             log(f'⚠️ Firefox 打包失败（跳过）: {msg}')
             if args.sign:
