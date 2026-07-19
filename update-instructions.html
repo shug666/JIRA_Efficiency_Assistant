@@ -26,22 +26,23 @@
   <h2 style="color: #42b983;">Chrome 更新</h2>
 
   <div class="download-btn">
-    <a href="http://10.24.137.80/jsa-dist/releases/jira-helper-chrome-3.4.4.crx" class="download-btn" download>下载 Chrome 安装包 (.crx)</a>
+    <a href="http://10.24.137.80/jsa-dist/releases/jira-helper-chrome-3.4.4.zip" class="download-btn" download>下载 Chrome 扩展包 (.zip)</a>
   </div>
 
   <div class="steps">
     <strong>安装步骤：</strong>
     <ol>
-      <li>点击上方按钮下载 <code>jira-helper-chrome-3.4.4.crx</code> 文件</li>
+      <li>点击上方按钮下载 <code>jira-helper-chrome-3.4.4.zip</code> 文件</li>
+      <li>把 <code>.zip</code> 文件解压到一个目录(例如 <code>D:\jira-helper</code> 或 <code>~/jira-helper</code>),路径建议全英文无空格</li>
       <li>打开新标签页，地址栏输入 <code>chrome://extensions</code> 回车</li>
       <li>打开页面右上角的<strong>开发者模式</strong>开关</li>
-      <li>把下载的 <code>.crx</code> 文件拖拽到 <code>chrome://extensions</code> 页面</li>
-      <li>弹出确认框点击"添加扩展程序"，完成更新</li>
+      <li>点击页面左上角的<strong>"加载已解压的扩展程序"</strong>按钮</li>
+      <li>选择刚才解压出来的整个文件夹,完成更新</li>
     </ol>
   </div>
 
   <div class="note">
-    <strong>注意：</strong>Chrome 75+ 不再自动更新非 Web Store 的扩展，因此每次有新版本都需要手动下载安装。后续版本会通过扩展内通知提醒您。
+    <strong>说明：</strong>Chrome 130+ 不再允许直接拖拽 .crx 安装非 Web Store 扩展,因此改为下载 zip 解压后"加载已解压的扩展程序"。后续版本会通过扩展内通知提醒您更新。
   </div>
 
   <hr style="margin: 32px 0; border: none; border-top: 1px solid #eee;">
@@ -58,14 +59,14 @@
     <ol>
       <li>点击上方按钮下载 <code>jira-helper-firefox-3.4.4.xpi</code> 文件</li>
       <li>打开新标签页，地址栏输入 <code>about:addons</code> 回车</li>
-      <li>点击页面上方的齿轮图标，选择"从文件安装附加组件"</li>
+      <li>点击页面上方的齿轮图标 ⚙️，选择"从文件安装附加组件"</li>
       <li>选择刚下载的 <code>.xpi</code> 文件，确认安装</li>
       <li>安装完成后重启浏览器即可使用新版本</li>
     </ol>
   </div>
 
   <div class="note">
-    <strong>注意：</strong>下载的 xpi 已由 AMO 签名，可直接安装。手动安装一次新版本后即可恢复正常。
+    <strong>注意：</strong>下载的 xpi 已由 AMO 签名，可直接安装。如果之前通过自定义 update_url 自动更新失败，手动安装一次新版本后即可恢复正常。
   </div>
 
   <p style="margin-top: 32px; color: #999; font-size: 12px;">JIRA效率助手 · 自动生成于发版流程</p>
