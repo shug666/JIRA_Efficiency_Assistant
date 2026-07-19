@@ -4,7 +4,7 @@
       "updates": [
         {
           "version": "3.4.2",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.4.2.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.4.2.xpi",
           "update_hash": "sha256:dD9niochlTSuSKlU2w9j41WZeFH3R0OfW2A33itdHME=",
           "applications": {
             "gecko": {
@@ -14,7 +14,7 @@
         },
         {
           "version": "3.4.1",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.4.1.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.4.1.xpi",
           "update_hash": "sha256:cKcuprgb5pfPw1Y0oJnk+F4F7SbOUv/s1I+dR7jiVWA=",
           "applications": {
             "gecko": {
@@ -24,7 +24,7 @@
         },
         {
           "version": "3.3.9",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.3.9.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.3.9.xpi",
           "update_hash": "sha256:4cP6XR25hLeFIwaH2OX6EvVMOkLKbfyMjYRjIU0ytIU=",
           "applications": {
             "gecko": {
@@ -34,7 +34,7 @@
         },
         {
           "version": "3.3.8",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.3.8.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.3.8.xpi",
           "update_hash": "sha256:kw8gJDFDNfN04jwjrmg+L8Z4ds7aKQpJ4Tsab3MgmwQ=",
           "applications": {
             "gecko": {
@@ -44,7 +44,7 @@
         },
         {
           "version": "3.3.7",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.3.7.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.3.7.xpi",
           "update_hash": "sha256:FD9fSrMpyCv3s+FPcH9l4xbvUoNAa54vI2aHH9Fza14=",
           "applications": {
             "gecko": {
@@ -54,7 +54,7 @@
         },
         {
           "version": "3.3.3",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.3.3.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.3.3.xpi",
           "update_hash": "sha256:QSTFdyhPVgqmxcS51xUCOO7XufPREHtM69MlxdYi6M8=",
           "applications": {
             "gecko": {
@@ -64,7 +64,7 @@
         },
         {
           "version": "3.3.0",
-          "update_link": "https://shug666.github.io/JIRA_Efficiency_Assistant/releases/jira-helper-firefox-3.3.0.xpi",
+          "update_link": "https://cdn.jsdelivr.net/gh/shug666/JIRA_Efficiency_Assistant@main/releases/jira-helper-firefox-3.3.0.xpi",
           "update_hash": "",
           "applications": {
             "gecko": {
