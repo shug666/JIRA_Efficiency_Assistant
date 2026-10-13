@@ -3,6 +3,16 @@
     "jira-template-manager@shugan": {
       "updates": [
         {
+          "version": "3.6.4",
+          "update_link": "http://10.24.137.80/jsa-dist/releases/jira-helper-firefox-3.6.4.xpi",
+          "update_hash": "sha256:ul1UFEkaI66KGXSAdLodUn03UtFKMFGtqZgFDPvtgHY=",
+          "applications": {
+            "gecko": {
+              "strict_min_version": "128.0"
+            }
+          }
+        },
+        {
           "version": "3.6.3",
           "update_link": "http://10.24.137.80/jsa-dist/releases/jira-helper-firefox-3.6.3.xpi",
           "update_hash": "sha256:IHGYu7Av4L6ze0YvuwJzc+WgPJRVTTo2UamCBPAzPZM=",
@@ -215,5 +225,5 @@
       ]
     }
   },
-  "_cache_bust": "1791438404"
+  "_cache_bust": "1791862085"
 }
